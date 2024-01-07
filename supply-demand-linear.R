@@ -43,7 +43,7 @@ linear_curve_2_ponts <- function(...,
   }
   
   if (!lineCoordinateHidden) {
-    gg <- gg + geom_segment(data = segments_df, aes(x = x, y = y, xend = xend, yend = yend), linetype = "dashed", color = "black")
+    gg <- gg + geom_segment(data = segments_df, aes(x = x, y = y, xend = xend, yend = yend), linetype = "dotted", color = "black")
   }
   
   gg <- gg +
@@ -105,37 +105,42 @@ find_intersection <- function(p1, p2, gg) {
   
   gg <- gg +
     geom_point(data = points_df, aes(x = x, y = y), color = "black", size = 3) +
-    geom_segment(data = segments_df, aes(x = x, y = y, xend = xend, yend = yend), linetype = "dashed", color = "black")
+    geom_segment(data = segments_df, aes(x = x, y = y, xend = xend, yend = yend), linetype = "dotted", color = "black")
   
   
   return (gg)
 }
 
 curve_N_ponts <- function(...,
-                          title,
-                          xlabel="Q - quantity",
-                          ylabel="P - price") {
-  gg <- ggplot()
+                          title = NULL,
+                          xmax = 10,
+                          ymax = 10,
+                          x,
+                          linecol,
+                          xlabel = "Q - quantity",
+                          ylabel = "P - price") {
   
-  for (i in seq_along(list(...))) {
-    curve_data <- data.frame(list(...)[[i]])
-    gg <- gg + geom_path(data = curve_data, aes(x = x, y = y), linewidth = 1)
+  curve <- list(...)
+  ncurve <- length(curve)
+  p <- ggplot(mapping = aes(x = x, y = y))
+  
+  for(i in 1:length(curve)) {
+    p <- p + geom_line(data = data.frame(curve[[i]]), color = linecol[i], linewidth = 1, linetype = 1)
   }
   
-  gg <- gg +
+  p <- p +
     labs(x = xlabel, y = ylabel, title = title) +
-    theme_classic() +
+    theme_classic()+
     coord_equal()
   
-  return(gg)
+  return(p)
 }
 
 curve_intersect <- function(curve1, curve2, gg) {
   curve1_f <- approxfun(curve1$x, curve1$y, rule = 2)
   curve2_f <- approxfun(curve2$x, curve2$y, rule = 2)
   
-  point_x <- uniroot(function(x) curve1_f(x) - curve2_f(x),
-                     c(min(curve1$x), max(curve1$x)))$root
+  point_x <- uniroot(function(x) curve1_f(x) - curve2_f(x), c(min(curve1$x), max(curve1$x)))$root
   
   point_y <- curve2_f(point_x)
   intersections <- bind_rows(list(x = point_x, y = point_y))
