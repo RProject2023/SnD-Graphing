@@ -1,73 +1,68 @@
 library(ggplot2)
 
-# Create df1 with rising trend (supply)
-df1 <- data.frame(x = 1:10, y = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-
-# Create df2 with falling trend (demand)
-df2 <- data.frame(x = 1:10, y = c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
-
-plot_smooth_curves <- function(df1, df2, x_col = "x", y_col = "y") {
-  plot <- ggplot() +
-    geom_smooth(data = df1, aes_string(x = x_col, y = y_col), color = "blue", se = FALSE) +
-    geom_smooth(data = df2, aes_string(x = x_col, y = y_col), color = "red", se = FALSE) +
-    labs(
-      title = "Smoothed Curves Plot",
-      x = "X-axis",
-      y = "Y-axis"
-    ) +
-    theme_minimal()
-
-  return(plot)
-}
-
-plot_smooth_exponential_polynomial <- function(df, x_col = "x", y_col = "y", method = "auto") {
+plot_smooth_exponential_polynomial <- function(df, x_col = "q", y_col = "p", method = "auto") {
   plot <- ggplot(df, aes_string(x = x_col, y = y_col)) +
     geom_smooth(method = method, se = FALSE) +
     labs(
       title = paste("Smoothed", ifelse(tolower(method) == "lm", "Polynomial", method), "Function Plot"),
-      x = "X-axis",
-      y = "Y-axis"
+      x = x_col,
+      y = y_col
     ) +
     theme_minimal()
 
   return(plot)
 }
 
-plot_intersection <- function(plot1, plot2) {
-  # Extract the data from the plots
-  data1 <- ggplot_build(plot1)$data[[1]]
-  data2 <- ggplot_build(plot2)$data[[1]]
+plot_equilibrium <- function(supplyPlot, demandPlot, x_col = "q", y_col = "p") {
+  
+  supplyPlotData <- supplyPlot$data
+  demandPlotData <- demandPlot$data
 
-  # Find the intersection coordinates
-  intersection <- data.frame(x = NA, y = NA)
-  for (i in 1:(nrow(data1) - 1)) {
-    for (j in 1:(nrow(data2) - 1)) {
-      x1 <- data1$x[i]
-      x2 <- data1$x[i + 1]
-      y1 <- data1$y[i]
-      y2 <- data1$y[i + 1]
-      x3 <- data2$x[j]
-      x4 <- data2$x[j + 1]
-      y3 <- data2$y[j]
-      y4 <- data2$y[j + 1]
 
-      if (is.na(intersection$x) && is.na(intersection$y)) {
+  equilibrium <- data.frame(x = NA, y = NA)
+  colnames(equilibrium) <- c(x_col, y_col)
+  
+  
+  for (i in 1:(nrow(supplyPlotData) - 1)) {
+    for (j in 1:(nrow(demandPlotData) - 1)) {
+      x1 <- supplyPlotData[[x_col]][i]
+      x2 <- supplyPlotData[[x_col]][i + 1]
+      y1 <- supplyPlotData[[y_col]][i]
+      y2 <- supplyPlotData[[y_col]][i + 1]
+
+      x3 <- demandPlotData[[x_col]][j]
+      x4 <- demandPlotData[[x_col]][j + 1]
+      y3 <- demandPlotData[[y_col]][j]
+      y4 <- demandPlotData[[y_col]][j + 1]
+
+      if (is.na(equilibrium[[x_col]]) && is.na(equilibrium[[y_col]])) {
         if (abs((x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1)) > 1e-10) {
           t1 <- ((x3 - x1) * (y4 - y3) - (x4 - x3) * (y3 - y1)) / ((x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1))
           t2 <- ((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / ((x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1))
 
           if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1) {
-            intersection$x <- x1 + t1 * (x2 - x1)
-            intersection$y <- y1 + t1 * (y2 - y1)
+            equilibrium[[x_col]] <- x1 + t1 * (x2 - x1)
+            equilibrium[[y_col]] <- y1 + t1 * (y2 - y1)
           }
         }
       }
     }
   }
 
-  return(intersection)
+  return(equilibrium)
 }
 
 
-intersection <- plot_intersection(plot_smooth_exponential_polynomial(df1), plot_smooth_exponential_polynomial(df2))
-print(intersection)
+col_x <- 'quantity'
+col_y <- 'price'
+
+supply <- data.frame(quantity = 1:10, price = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+demand <- data.frame(quantity = 1:10, price = c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+
+supplyPlot <- plot_smooth_exponential_polynomial(supply, x_col = col_x, y_col = col_y)
+demandPlot <- plot_smooth_exponential_polynomial(demand, x_col = col_x, y_col = col_y)
+
+equilibrium <- plot_equilibrium(supplyPlot, demandPlot, col_x, col_y)
+
+print(equilibrium)
+
