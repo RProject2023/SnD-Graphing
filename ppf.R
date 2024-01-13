@@ -1,12 +1,19 @@
+# Variables:
+#   curve: curve of Production-Possibility Frontier
+#   title: title of the displayed graph
+#   color: colors of the curves
+#   x: points on the Production Possibility Frontier
+#   labels: labels of points on the Production Possibility Frontier
+#   xlabel: label of the x-axis
+#   ylabel: label of the y-axis
+
 ppf <- function(curve,
-                xmax = 10,
-                ymax = 10,
+                title = "Production-possibility frontier",
+                color = "blue",
                 x,
                 labels,
-                color = "blue",
-                title = "Production-possibility frontier",
                 xlabel = "Product A",
-                ylabel = "Product B"){
+                ylabel = "Product B") {
   
   gg <- ggplot(mapping = aes(x = x, y = y))
   
@@ -34,7 +41,6 @@ ppf <- function(curve,
       scale_y_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve)) + 1), breaks = round(intersections$y, 1)) +
       geom_text(data = intersections, aes(x = x, y = y, label = labels, vjust = -0.5, hjust = -0.2))
     
-
   } else {
     gg <- gg + scale_x_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve)) + 1)) +
       scale_y_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve)) + 1))
@@ -42,12 +48,10 @@ ppf <- function(curve,
   
   gg <- gg +
     labs(x = xlabel, y = ylabel, title = title) +
-    theme_classic()+
-    coord_equal()
+    theme_classic()
   
   return(gg)
 }
 
-curve_data <- bezier(x = c(0, 4, 7, 10), y = c(11, 9, 6, 0)) %>% as.data.frame()
-ppf(curve = curve_data, xmax = 12, ymax = 12, x = c(2, 5, 8), labels = c("A", "B", "C"))
+
 
