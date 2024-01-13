@@ -121,11 +121,11 @@ curve_intersect(supply, demand2, gg)
 
 **FUNKCIJA**: *`ppf`*
 
--   **curve** : granica proizvodnih mogućnosti
+-   **...** : granice proizvodnih mogućnosti
 
 -   **title**: naslov grafa, **DEFAULT**="Production-possibility frontier"
 
--   **color**: boja krivulje, **DEFAULT**="blue"
+-   **colors**: boje krivulja
 
 -   **x**: točke na krivulji
 
@@ -139,5 +139,9 @@ curve_intersect(supply, demand2, gg)
 source("ppf.R")
 
 curve_data <- bezier(x = c(0, 4, 7, 10), y = c(11, 9, 6, 0)) %>% as.data.frame()
-ppf(curve = curve_data, x = c(2, 5, 8), labels = c("A", "B", "C"))
+ppf(curve_data, colors="red", x = c(2, 5, 8), labels = c("A", "B", "C"))
+
+curve_data1 <- bezier(x = c(0, 5, 9, 13), y = c(11, 9, 6, 0)) %>% as.data.frame()
+curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame()
+ppf(curve_data1, curve_data2, colors=c("red", "blue"), x = c(3, 7, 10), labels = c("A", "B", "C", "D", "E", "F"))
 ```
