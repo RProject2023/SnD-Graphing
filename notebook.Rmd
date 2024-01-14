@@ -293,3 +293,36 @@ my_function3 <- function(x) {return(-30*x)}
 curve_by_function(my_function1, my_function2, my_function3, color = c("red", "blue", "purple")) 
 
 ```
+
+**FUNKCIJA**: *`move_curves_along_x_axis`*
+
+-   **...** : lista krivulja
+
+-   **offset** : pomak, **DEFAULT**=0
+
+-   **is_percentage** : je li pomak zadan u postotku, **DEFAULT**=FALSE
+
+-   **title**: naslov prikazanog grafa, **DEFAULT**="Move along x-axis"
+
+-   **color**: boje orginalnih krivulja, **DEFAULT**="blue"
+
+-   **color2**: boje pomaknutih krivulja, **DEFAULT**="red"
+
+-   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
+
+-   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=20
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="x"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="y"
+
+
+Pomicanje grafa po x osi
+```{r}
+source("offset.R")
+
+curve_data <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
+move_curves_along_x_axis(curve_data, offset = 5)
+move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)
+```
+
