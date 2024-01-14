@@ -145,3 +145,151 @@ curve_data1 <- bezier(x = c(0, 5, 9, 13), y = c(11, 9, 6, 0)) %>% as.data.frame(
 curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame()
 ppf(curve_data1, curve_data2, colors=c("red", "blue"), x = c(3, 7, 10), labels = c("A", "B", "C", "D", "E", "F"))
 ```
+
+
+
+```{r}
+source("input_function.R")
+
+
+```
+
+
+**FUNKCIJA**: *`curve_by_function`*
+
+-   **...** : jedna ili više ulaznih funkcija
+
+-   **title**: naslov prikazanog grafa
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="Q - quantity"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
+
+-   **color**: boje krivulja (u obliku liste), **DEFAULT**="blue"
+
+-   **label**: oznaka uz krivulju (u obliku liste)
+
+-   **x_coordinates**: lista x koordinata točaka
+
+-   **y_coordinates**: lista y koordinata točaka
+
+-   **pointColor**: boja točaka (u obliku liste), **DEFAULT**="blue"
+
+-   **showInfo**: zastavica za prikaz koordinata točaka na osima, **DEFAULT**="TRUE"
+
+-   **pointLabel**: oznaka uz točku (u obliku liste)
+
+-   **axisValues**: lista vrijednosti za prikazati na osi x 
+
+-   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=-50
+
+-   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=50
+
+-   **minY**: minimalna vrijednost koordinatne osi y, **DEFAULT**=-100
+
+-   **maxY**: maksimalna vrijednost koordinatne osi y, **DEFAULT**=2500
+
+```{r}
+my_function1 <- function(x){ return(x^2)}
+
+curve_by_function(my_function1) 
+
+```
+Naslov, boja, nazivi na osima.
+```{r}
+
+curve_by_function(my_function1, title = "Demand", color = "red", xlabel = "Q", ylabel = "P")
+
+```
+Prikaz određenih brojki na osima
+```{r}
+
+axis_values = c(10, 20, 35)
+
+curve_by_function(my_function1, axisValues = axis_values) 
+
+```
+Dodavanje natpisa uz krivulje
+```{r}
+
+curve_by_function(my_function1, label = "D") 
+
+```
+
+Dodavanje točaka:
+-   dodavanje linija prema osima iz tih točaka
+-   označavanje na osima vrijednosti koje tim točkama pripadaju
+-   dodavanje imena točkama
+
+1. Dodavanje točaka uz specifikaciju koordinata
+```{r}
+
+point_x = c(10, 20, 0)
+point_y = c(400, 700, 300)
+labels = c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, y_coordinates = point_y, pointColor = "red", pointLabel = labels) 
+
+```
+2. Dodavanje točaka kao sjecište zadane krivulje i pravca x="zadana vrijednost"
+```{r}
+
+point_x = c(10, 20, 0)
+labels = c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, pointColor = "red", pointLabel = labels) 
+
+```
+
+Dodavanje točaka bez linija prema osima, bez pripadnih vrijednosti na osima i bez imena točaka.
+```{r}
+
+my_function1 <- function(x){ return(x^2)}
+point_x = c(10, 20, 0)
+labels = c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, pointLabel = labels, showInfo = FALSE) 
+
+```
+Više funkcija
+```{r}
+
+my_function2 <- function(x) {return(40*x)}
+
+curve_by_function(my_function1, my_function2)
+
+```
+
+Dodavanje boje i natpisa za svaku krivulju.
+```{r}
+
+curveLabels = c("D", "S")
+
+curve_by_function(my_function1, my_function2, title = "Demand", color = c("red", "blue"), label = curveLabels) 
+
+```
+Dodavanje točaka. 
+```{r}
+
+point_x = c(10, 20, 0)
+
+
+curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x)
+
+```
+```{r}
+
+point_x = c(10, 20, 0)
+labels = c("A", "a", "B", "b", "C", "c")
+
+curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x, pointLabel = labels, showInfo = FALSE) 
+
+```
+Više od dvije funkcije
+```{r}
+
+my_function3 <- function(x) {return(-30*x)}
+
+curve_by_function(my_function1, my_function2, my_function3, color = c("red", "blue", "purple")) 
+
+```
