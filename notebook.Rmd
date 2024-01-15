@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
-source("supply-demand.R")
+source("main.R")
 ```
 
 **FUNKCIJA**: *`linear_curve_2_ponts`*
