@@ -21,17 +21,17 @@ library(dplyr)
 #'
 #' @import ggplot2
 
-linear_curve_2_ponts <- function(...,
-                                 title,
-                                 color,
-                                 minX = 0,
-                                 maxX = 10,
-                                 minY = 0,
-                                 maxY = 10,
-                                 xlabel = "Q - quantity",
-                                 ylabel = "P - price",
-                                 pointsHidden = TRUE,
-                                 lineCoordinateHidden = TRUE) {
+linear_curve_2_points <- function(...,
+                                  title,
+                                  color,
+                                  minX = 0,
+                                  maxX = 10,
+                                  minY = 0,
+                                  maxY = 10,
+                                  xlabel = "Q - quantity",
+                                  ylabel = "P - price",
+                                  pointsHidden = TRUE,
+                                  lineCoordinateHidden = TRUE) {
     gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     points_df <- data.frame()
     segments_df <- data.frame()
@@ -124,11 +124,11 @@ linear_curve_characteristic <- function(...,
 }
 
 
-curve_N_ponts <- function(...,
-                          title,
-                          color,
-                          xlabel = "Q - quantity",
-                          ylabel = "P - price") {
+curve_N_points <- function(...,
+                           title,
+                           color,
+                           xlabel = "Q - quantity",
+                           ylabel = "P - price") {
     curve <- list(...)
     ncurve <- length(curve)
     gg <- ggplot(mapping = aes(x = x, y = y))
@@ -312,7 +312,7 @@ equilibrium <- function(curve1, curve2, gg) {
 #'
 #' @import ggplot2
 
-supplier_revenue <- function(curve1, curve2, gg) {
+supplier_revenue <- function(curve1, curve2, gg, color = "green") {
     equilibrium <- equilibrium(curve1, curve2, gg)
 
     revenue <- 0
@@ -322,7 +322,7 @@ supplier_revenue <- function(curve1, curve2, gg) {
 
     # draw a straight line from the origin to the point of equilibrium
     gg <- gg +
-        geom_segment(aes(x = 0, y = 0, xend = equilibrium$x, yend = equilibrium$y), color = "red", size = 1) +
+        geom_segment(aes(x = equilibrium$x, y = 0, xend = equilibrium$x, yend = equilibrium$y), color = color, size = 1) +
         geom_text(aes(x = equilibrium$x / 2, y = equilibrium$y / 2, label = sprintf("Revenue = %0.1f", revenue), hjust = -0.3))
 
     out <- list("plot" = gg, "revenue" = revenue)
@@ -335,33 +335,32 @@ supplier_revenue <- function(curve1, curve2, gg) {
 #' @param curve1: first curve
 #' @param curve2: second curve
 #' @param gg: graph on which the surplus area will be plotted
-#' @param target: target of surplus calculation (supplier - 0,  consumer - 1, both - 2)
 #'
 #' @import ggplot2
 
-surplus_area <- function(curve1, curve2, gg, target = 0) {
+surplus_area <- function(curve1, curve2, gg) {
+    df1x <- curve1$x
+    df1y <- curve1$y
+    df2x <- curve2$x
+    df2y <- curve2$y
+
     equilibrium <- equilibrium(curve1, curve2, gg)
 
-    surplus <- 0
-    if (!is.na(equilibrium$x) && !is.na(equilibrium$y)) {
-        surplus <- equilibrium$x * equilibrium$y
-    }
+    # surplus <- 0
+    # if (!is.na(equilibrium$x) && !is.na(equilibrium$y)) {
+    #     surplus <- equilibrium$x * equilibrium$y
+    # }
+    df1x <- df1x[df1x <= equilibrium$x]
+    df2x <- df2x[df2x <= equilibrium$x]
+    df1y <- df1y[df1y <= equilibrium$y]
+    df2y <- df2y[df2y >= equilibrium$y]
 
-    # draw a straight line from the origin to the point of equilibrium
     gg <- gg +
-        geom_segment(aes(x = 0, y = 0, xend = equilibrium$x, yend = equilibrium$y), color = "red", size = 1) +
-        geom_text(aes(x = equilibrium$x / 2, y = equilibrium$y / 2, label = sprintf("Surplus = %0.1f", surplus), hjust = -0.3))
-
-    if (target == 0) {
-        gg <- gg + geom_area(data = data.frame(curve1), aes(x = x, y = y), fill = "red", alpha = 0.5)
-    } else if (target == 1) {
-        gg <- gg + geom_area(data = data.frame(curve2), aes(x = x, y = y), fill = "red", alpha = 0.5)
-    } else if (target == 2) {
-        gg <- gg + geom_area(data = data.frame(curve1), aes(x = x, y = y), fill = "red", alpha = 0.5) +
-            geom_area(data = data.frame(curve2), aes(x = x, y = y), fill = "red", alpha = 0.5)
-    }
+        geom_ribbon(aes(x = df1x, ymin = df1y, ymax = equilibrium$y, fill = "Producer surplus"), alpha = 0.15, inherit.aes = FALSE) +
+        geom_ribbon(aes(x = df2x, ymin = equilibrium$y, ymax = df2y, fill = "Consumer surplus"), alpha = 0.15, inherit.aes = FALSE)
 
     out <- list("plot" = gg, "surplus" = surplus)
+    # out <- list(length(df1x), length(df1y), length(df2x), length(df2y))
     return(out)
 }
 
