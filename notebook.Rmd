@@ -158,13 +158,11 @@ gg_sr
 supply_srp <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
 demand_srp <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
 
-gg_srp <- curve_N_points(supply_srp, demand_srp, title = "Supply & Demand", color = "red")
+gg_srp <- curve_N_points(supply_srp, demand_srp, title = "Supply & Demand", color = c("blue", "red"))
 
 surplus <- surplus_area(supply_srp, demand_srp, gg_srp)
 
-gg_srp <- surplus$plot
-
-gg_srp
+surplus
 ```
 
 **FUNKCIJA**: *`production_possibility_frontier`*

@@ -346,10 +346,6 @@ surplus_area <- function(curve1, curve2, gg) {
 
     equilibrium <- equilibrium(curve1, curve2, gg)
 
-    # surplus <- 0
-    # if (!is.na(equilibrium$x) && !is.na(equilibrium$y)) {
-    #     surplus <- equilibrium$x * equilibrium$y
-    # }
     df1x <- df1x[df1x <= equilibrium$x]
     df2x <- df2x[df2x <= equilibrium$x]
     df1y <- df1y[df1y <= equilibrium$y]
@@ -359,9 +355,7 @@ surplus_area <- function(curve1, curve2, gg) {
         geom_ribbon(aes(x = df1x, ymin = df1y, ymax = equilibrium$y, fill = "Producer surplus"), alpha = 0.15, inherit.aes = FALSE) +
         geom_ribbon(aes(x = df2x, ymin = equilibrium$y, ymax = df2y, fill = "Consumer surplus"), alpha = 0.15, inherit.aes = FALSE)
 
-    out <- list("plot" = gg, "surplus" = surplus)
-    # out <- list(length(df1x), length(df1y), length(df2x), length(df2y))
-    return(out)
+    return(gg)
 }
 
 
