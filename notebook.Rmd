@@ -165,6 +165,31 @@ surplus <- surplus_area(supply_srp, demand_srp, gg_srp)
 surplus
 ```
 
+**FUNKCIJA**: *`indifference_curve`*
+
+-   **curve**: krivulja potrošnje
+
+-   **x**: X vrijednosti gdje se nalaze sjecišta
+
+-   **labels**: oznake sjecišta
+
+-   **linecolor**: boje krivulja, **DEFAULT**="black"
+
+-   **title**: naslov prikazanog grafa, **DEFAULT**="Indifference curve"
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="X"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="Y"
+
+
+```{r}
+curve <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
+
+indif <- indifference_curve(curve, x = c(2, 5, 8), labels = c("A", "B", "C"))
+
+indif
+```
+
 **FUNKCIJA**: *`production_possibility_frontier`*
 
 -   **...** : granice proizvodnih mogućnosti
@@ -190,6 +215,33 @@ curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame
 production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(3, 7, 10), labels = c("A", "B", "C", "D", "E", "F"))
 ```
 
+isoquant <- function(L, K, output_levels, A, alpha, beta)
+**FUNKCIJA**: *`isoquant`*
+
+-   **L**: lista vrijednosti rada
+  
+-   **K**: lista vrijednosti kapitala
+  
+-   **output_levels**: lista razina proizvodnje
+  
+-   **A**: parametar proizvodnje
+  
+-   **alpha**: elastičnost proizvodnje rada
+  
+-   **beta**: elastičnost proizvodnje kapitala
+  
+
+```{r}
+L <- seq(1, 100, length.out = 100)
+K <- seq(1, 100, length.out = 100)
+output_levels <- c(25, 50, 75)
+
+A <- 1
+alpha <- 0.5
+beta <- 0.5
+
+isoquant(L, K, output_levels, A, alpha, beta)
+```
 
 
 **FUNKCIJA**: *`curve_by_function`*
@@ -342,8 +394,6 @@ curve_by_function(my_function1, my_function2, my_function3, color = c("red", "bl
 Pomicanje grafa po x osi
 
 ```{r}
-source("offset.R")
-
 curve_data <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
 move_curves_along_x_axis(curve_data, offset = 5)
 move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)

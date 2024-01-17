@@ -1,7 +1,7 @@
 library(ggplot2)
 library(Hmisc)
 library(dplyr)
-
+library(extras)
 
 
 #' @title Variables:
@@ -19,7 +19,7 @@ library(dplyr)
 #' @param   pointsHidden: are the points hidden
 #' @param   lineCoordinateHidden: are the points marked on the coordinates
 #'
-#' @import ggplot2
+#' @return a new graph with the curves based on the 2 given points
 
 linear_curve_2_points <- function(...,
                                   title,
@@ -90,7 +90,7 @@ linear_curve_2_points <- function(...,
 #' @param   xlabel: label of the x-axis
 #' @param   ylabel: label of the y-axis
 #'
-#' @import ggplot2
+#' @return a new graph with the curves based on the curve's characteristics
 
 linear_curve_characteristic <- function(...,
                                         title,
@@ -173,7 +173,7 @@ curve_N_points <- function(...,
 #' @param minY: Minimum value of the y-axis coordinate.
 #' @param maxY: Maximum value of the y-axis coordinate.
 #'
-#' @import ggplot2
+#' @return A new graph with the curves based on the given functions.
 
 
 curve_by_function <- function(...,
@@ -280,6 +280,8 @@ curve_by_function <- function(...,
 #' @param   color: colors of the curves
 #' @param   xlabel: label of the x-axis
 #' @param   ylabel: label of the y-axis
+#'
+#' @return a modified graph with the curves based on the given points
 
 
 
@@ -310,7 +312,7 @@ equilibrium <- function(curve1, curve2, gg) {
 #' @param  curve2: second curve
 #' @param gg: graph on which the revenue will be plotted
 #'
-#' @import ggplot2
+#' @return a list containing the modified graph with the supplier's revenue and the revenue value
 
 supplier_revenue <- function(curve1, curve2, gg, color = "green") {
     equilibrium <- equilibrium(curve1, curve2, gg)
@@ -336,7 +338,7 @@ supplier_revenue <- function(curve1, curve2, gg, color = "green") {
 #' @param curve2: second curve
 #' @param gg: graph on which the surplus area will be plotted
 #'
-#' @import ggplot2
+#' @return a modified graph with the surplus area
 
 surplus_area <- function(curve1, curve2, gg) {
     df1x <- curve1$x
@@ -362,7 +364,7 @@ surplus_area <- function(curve1, curve2, gg) {
 #' @title Indifference curve
 #' @description This function plots an indifference curve.
 #'
-#' @param curve: Curve to display. This will override the sample curve.
+#' @param curve: Demand Curve to display. This will override the sample curve.
 #' @param x: X-axis values where to create intersections.
 #' @param labels: If 'x' is specified, these are the labels for the intersection points.
 #' @param linecolor: Line color of the curve.
@@ -370,7 +372,7 @@ surplus_area <- function(curve1, curve2, gg) {
 #' @param xlabel: Name of the X-axis.
 #' @param ylabel: Name of the Y-axis.
 #'
-#' @import ggplot2 Hmisc
+#' @return A new graph with the indifference curve.
 
 indifference_curve <- function(curve,
                                x,
@@ -434,7 +436,7 @@ indifference_curve <- function(curve,
 #' @param  xlabel: label of the x-axis
 #' @param  ylabel: label of the y-axis
 #'
-#' @import ggplot2 Hmisc
+#' @return a new graph with the Production Possibility Frontier
 
 production_possibility_frontier <- function(...,
                                             title = "Production-possibility frontier",
@@ -495,7 +497,7 @@ production_possibility_frontier <- function(...,
 #' @param  alpha: the elasticity of production of labor
 #' @param  beta: the elasticity of production of capital
 #'
-#' @import ggplot2
+#' @return a new graph with the isoquant curve(s) for the given production function
 
 isoquant <- function(L, K, output_levels, A, alpha, beta) {
     data <- expand.grid(L = L, K = K)
@@ -504,4 +506,86 @@ isoquant <- function(L, K, output_levels, A, alpha, beta) {
         geom_contour(aes(z = Q), breaks = output_levels, color = "blue", linetype = "solid", size = 0.8) +
         labs(x = "Labor (L)", y = "Capital (K)", title = paste("Isoquant Curve(s) for Q =", paste(output_levels, collapse = ", "))) +
         theme_minimal()
+}
+
+
+
+#' @title Move Curves Along x-axis
+#' @description This function moves the curves along the x-axis by a specified offset.
+#'
+#' @param ... Curves to be plotted.
+#' @param offset How much the graph needs to be moved (either a specific value or a percentage, 0 by default).
+#' @param is_percentage FALSE if offset represents an exact value, TRUE if it represents a percentage (FALSE by default).
+#' @param title Title of the displayed graph.
+#' @param colors Colors of the curves.
+#' @param colors2 Colors of the moved curves.
+#' @param minX Minimum value of the x-axis coordinate.
+#' @param maxX Maximum value of the x-axis coordinate.
+#' @param xlabel Label of the x-axis.
+#' @param ylabel Label of the y-axis.
+#'
+#' @return The modified graph with the specified offset along the x-axis.
+
+move_curves_along_x_axis <- function(...,
+                                     offset = 0,
+                                     is_percentage = FALSE,
+                                     title = "Move along x-axis",
+                                     colors = "blue",
+                                     colors2 = "red",
+                                     minX = 0,
+                                     maxX = 20,
+                                     xlabel = "x",
+                                     ylabel = "y") {
+    curves <- list(...)
+
+    gg <- ggplot(mapping = aes(x = x, y = y)) +
+        xlim(minX, maxX)
+
+    for (i in seq_along(curves)) {
+        data <- data.frame(curves[[i]])
+
+        gg <- gg + geom_line(data = data, color = colors[i], linewidth = 1, linetype = 1)
+
+        if (is_percentage) {
+            data$x <- data$x + diff(range(data$x)) * (offset / 100)
+        } else {
+            data$x <- data$x + offset
+        }
+
+        gg <- gg + geom_line(data = data, color = colors2[i], linewidth = 1, linetype = 1)
+    }
+
+    gg <- gg +
+        labs(title = title, x = xlabel, y = ylabel)
+
+    return(gg)
+}
+
+#' @title Move Graph Along x-axis
+#' @description This function moves the graph along the x-axis by a specified offset.
+#'
+#' @param plot Graph which needs to be moved along the x-axis.
+#' @param offset How much the graph needs to be moved (either a specific value or a percentage, 0 by default).
+#' @param is_percentage FALSE if the offset represents an exact value, TRUE if it represents a percentage (FALSE by default).
+#'
+#' @return The modified graph with the specified offset along the x-axis.
+
+move_graph_along_x_axis <- function(plot, offset = 0, is_percentage = FALSE) {
+    layers <- plot$layers
+
+    move_layer <- lapply(layers, function(layer) {
+        try(
+            if (is_percentage) {
+                layer$data$x <- layer$data$x + diff(range(layer$data$x)) * (offset / 100)
+            } else {
+                layer$data$x <- layer$data$x + offset
+            }
+        )
+        return(layer)
+    })
+
+    plot2 <- plot
+    plot2$layers <- move_layer
+
+    return(plot2)
 }
