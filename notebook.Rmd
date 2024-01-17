@@ -215,7 +215,6 @@ curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame
 production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(3, 7, 10), labels = c("A", "B", "C", "D", "E", "F"))
 ```
 
-isoquant <- function(L, K, output_levels, A, alpha, beta)
 **FUNKCIJA**: *`isoquant`*
 
 -   **L**: lista vrijednosti rada
