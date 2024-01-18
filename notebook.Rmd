@@ -167,9 +167,13 @@ surplus
 
 **FUNKCIJA**: *`indifference_curve`*
 
--   **curve**: krivulja potrošnje
+-   **x**: točke na x osi na temelju kojih se crta krivulja
 
--   **x**: X vrijednosti gdje se nalaze sjecišta
+-   **y**: točke na y osi na temelju kojih se crta krivulja
+
+-   **n_curves**: broj krivulja, **DEFAULT**="1"
+
+-   **x_intersections**: X vrijednosti gdje se nalaze sjecišta
 
 -   **labels**: oznake sjecišta
 
@@ -183,9 +187,12 @@ surplus
 
 
 ```{r}
-curve <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
+indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), n_curves = 3)
 
-indif <- indifference_curve(curve, x = c(2, 5, 8), labels = c("A", "B", "C"))
+indif
+```
+```{r}
+indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), x_intersections = c(3, 6))
 
 indif
 ```
