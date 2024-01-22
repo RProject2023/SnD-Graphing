@@ -392,7 +392,7 @@ surplus_area <- function(curve1, curve2, gg) {
 #' @param xlabel: Name of the X-axis.
 #' @param ylabel: Name of the Y-axis.
 #' 
-#' @return A new graph with the indifference curve.
+#' @return A list containing the new graph with the indifference curve and the curves.
 
 indifference_curve <- function(x,
                                y,
