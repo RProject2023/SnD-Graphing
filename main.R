@@ -571,6 +571,7 @@ move_curves_along_x_axis <- function(...,
                                      xlabel = "x",
                                      ylabel = "y") {
     curves <- list(...)
+    moved_curves <- list()
 
     gg <- ggplot(mapping = aes(x = x, y = y)) +
         xlim(minX, maxX)
@@ -585,6 +586,8 @@ move_curves_along_x_axis <- function(...,
         } else {
             data$x <- data$x + offset
         }
+        
+        moved_curves[[i]] <- data
 
         gg <- gg + geom_line(data = data, color = colors2[i], linewidth = 1, linetype = 1)
     }
@@ -592,7 +595,7 @@ move_curves_along_x_axis <- function(...,
     gg <- gg +
         labs(title = title, x = xlabel, y = ylabel)
 
-    return(gg)
+    return(list("plot" = gg, "moved_curves" = moved_curves))
 }
 
 #' @title Move Graph Along x-axis

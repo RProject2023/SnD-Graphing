@@ -401,6 +401,6 @@ Pomicanje grafa po x osi
 
 ```{r}
 curve_data <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
-move_curves_along_x_axis(curve_data, offset = 5)
-move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)
+move_curves_along_x_axis(curve_data, offset = 5)$plot
+move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)$plot
 ```
