@@ -210,7 +210,8 @@ curve_by_function <- function(...,
                               minX = -50,
                               maxX = 50,
                               minY = -100,
-                              maxY = 2500) {
+                              maxY = 2500,
+                              gg = NULL) {
     curves <- list(...)
     ncurves <- length(curves)
 
@@ -218,9 +219,11 @@ curve_by_function <- function(...,
         color <- rep("blue", ncurves)
     }
 
-
-    gg <- ggplot(data.frame(x = c(minX, maxX)), aes(x = x)) +
-        labs(title = title, x = xlabel, y = ylabel) +
+    if (is.null(gg)) {
+      gg <- ggplot(data.frame(x = c(minX, maxX)), aes(x = x))
+    }
+    
+    gg <- gg + labs(title = title, x = xlabel, y = ylabel) +
         coord_cartesian(ylim = c(minY, maxY))
 
     # add curves
