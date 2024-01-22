@@ -473,7 +473,8 @@ indifference_curve <- function(x,
   
   gg <- gg + labs(x = xlabel, y = ylabel, title = title) + theme_classic() + coord_equal()
   
-  return(gg)
+  out <- list("plot" = gg, "curves" = curves)
+  return(out)
 }
 
 
