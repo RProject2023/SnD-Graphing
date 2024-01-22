@@ -110,9 +110,10 @@ curve_N_points(supply, demand, title = "Supply & Demand", color = c("blue", "red
 -   **gg**: graf na kojem će se iscrtati točka presjeka prve i druge krivulje
 
 ```{r}
-demand2 <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
+supply <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
+demand <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
 
-gg <- curve_N_points(supply, demand, demand2, title = "Supply & Demand", color = c("blue", "red", "pink"))
+gg <- curve_N_points(supply, demand, title = "Supply & Demand", color = c("blue", "red", "pink"))
 
 PoE <- equilibrium(supply, demand, gg)
 gg <- PoE$plot
@@ -131,6 +132,8 @@ gg
 -   **gg**: plot na kojem se nalaze krivulje
 
 -   **color**: boja točke presjeka krivulja, **DEFAULT**="green"
+
+-  **displayValue**: prikaz vrijednosti točke presjeka, **DEFAULT**=TRUE
 
 ```{r}
 supply_sr <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()

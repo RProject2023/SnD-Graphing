@@ -33,7 +33,6 @@ linear_curve_2_points <- function(...,
                                   pointsHidden = TRUE,
                                   lineCoordinateHidden = TRUE,
                                   gg = NULL) {
-  
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
@@ -106,7 +105,6 @@ linear_curve_characteristic <- function(...,
                                         xlabel = "Q - quantity",
                                         ylabel = "P - price",
                                         gg = NULL) {
-  
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
@@ -131,6 +129,16 @@ linear_curve_characteristic <- function(...,
     return(gg)
 }
 
+#' @title  Curve by N points
+#' @description This function plots the curves based on the given points.
+#'
+#' @param   ...: list of curves in the form curve <- bezier(x = c(x1, x2, x3...), y = c(y1, y2, y3...)) %>% as.data.frame()
+#' @param   title: title of the displayed graph
+#' @param   color: colors of the curves
+#' @param   xlabel: label of the x-axis
+#' @param   ylabel: label of the y-axis
+#'
+#' @return a modified graph with the curves based on the given points
 
 curve_N_points <- function(...,
                            title,
@@ -144,7 +152,7 @@ curve_N_points <- function(...,
                            gg = NULL) {
     curve <- list(...)
     ncurve <- length(curve)
-    
+
     if (is.null(gg)) {
         gg <- ggplot(mapping = aes(x = x, y = y))
     }
@@ -162,14 +170,7 @@ curve_N_points <- function(...,
     return(gg)
 }
 
-#' @title  Point of equilibrium
-#' @description This function plots the point of equilibrium (intersection) of two curves.
-#'
-#' @param  curve1: first curve
-#' @param  curve2: second curve
-#' @param  gg: graph on which the intersection point of curve 1 and curve 2 will be plotted
-#'
-#' @import ggplot2
+
 
 #' @title Curve by Function
 #' @description This function plots one or more curves defined by a function.
@@ -288,20 +289,14 @@ curve_by_function <- function(...,
 
 
 
-
-
-#' @title  Curve by N points
-#' @description This function plots the curves based on the given points.
+#' @title  Point of equilibrium
+#' @description This function plots the point of equilibrium (intersection) of two curves.
 #'
-#' @param   ...: list of curves in the form curve <- bezier(x = c(x1, x2, x3...), y = c(y1, y2, y3...)) %>% as.data.frame()
-#' @param   title: title of the displayed graph
-#' @param   color: colors of the curves
-#' @param   xlabel: label of the x-axis
-#' @param   ylabel: label of the y-axis
+#' @param  curve1: first curve
+#' @param  curve2: second curve
+#' @param  gg: graph on which the intersection point of curve 1 and curve 2 will be plotted
 #'
-#' @return a modified graph with the curves based on the given points
-
-
+#' @import ggplot2
 
 equilibrium <- function(curve1, curve2, gg) {
     curve1_f <- approxfun(curve1$x, curve1$y, rule = 2)
@@ -329,10 +324,12 @@ equilibrium <- function(curve1, curve2, gg) {
 #' @param  curve1: first curve
 #' @param  curve2: second curve
 #' @param gg: graph on which the revenue will be plotted
+#' @param color: color of the revenue line
+#' @param displayValue: display the revenue value on the graph
 #'
 #' @return a list containing the modified graph with the supplier's revenue and the revenue value
 
-supplier_revenue <- function(curve1, curve2, gg, color = "green") {
+supplier_revenue <- function(curve1, curve2, gg, color = "green", displayValue = TRUE) {
     equilibrium <- equilibrium(curve1, curve2, gg)
 
     revenue <- 0
@@ -343,7 +340,12 @@ supplier_revenue <- function(curve1, curve2, gg, color = "green") {
     # draw a straight line from the origin to the point of equilibrium
     gg <- gg +
         geom_segment(aes(x = equilibrium$x, y = 0, xend = equilibrium$x, yend = equilibrium$y), color = color, size = 1) +
-        geom_text(aes(x = equilibrium$x / 2, y = equilibrium$y / 2, label = sprintf("Revenue = %0.1f", revenue), hjust = -0.3))
+        geom_segment(aes(x = 0, y = equilibrium$y, xend = equilibrium$x, yend = equilibrium$y), color = color, size = 1) +
+        geom_ribbon(aes(x = c(0, equilibrium$x), ymin = 0, ymax = equilibrium$y, fill = color), alpha = 0.15, inherit.aes = FALSE)
+    if (displayValue) {
+        gg <- gg +
+            geom_text(aes(x = equilibrium$x / 2, y = equilibrium$y / 2, label = sprintf("Revenue = %0.1f", revenue), hjust = -0.3))
+    }
 
     out <- list("plot" = gg, "revenue" = revenue)
     return(out)
@@ -391,90 +393,85 @@ surplus_area <- function(curve1, curve2, gg) {
 #' @param title: Name of the plot.
 #' @param xlabel: Name of the X-axis.
 #' @param ylabel: Name of the Y-axis.
-#' 
+#'
 #' @return A list containing the new graph with the indifference curve and the curves.
 
 indifference_curve <- function(x,
                                y,
-                               n_curves=1,
+                               n_curves = 1,
                                x_intersections,
                                labels,
                                linecolor = "black",
                                title = "Indifference curve",
                                xlabel = "X",
                                ylabel = "Y") {
-  
-  if(missing(x) || length(x) < 3) {
-    stop("'x' must have at least three elements.")
-  }
-  
-  if(missing(y) || length(y) < 3) {
-    stop("'y' must have at least three elements.")
-  }
-  
-  if(!(all(diff(x) > 0))) {
-    stop("'x' should be in ascending order.") 
-  }
-  
-  if(!(all(diff(y) < 0))) {
-    stop("'y' should be in descending order.") 
-  }
-  
-  curve <- data.frame(bezier(x = x, y = y))
-  
-  curves <- list()
-  for(i in 0:(n_curves-1)) {
-    curves[[i+1]] <- data.frame(curve) + i
-  }
-  
-  gg <- ggplot(mapping = aes(x = x, y = y))
-  for(i in 0:(n_curves-1)) {
-    gg <- gg + geom_line(data = curves[[i+1]], color = linecolor, linewidth = 1, linetype = 1)
-  }
-  
-  if(!missing(x_intersections)) {
-    
-    if(missing(labels)) {
-      num_labels <- length(x_intersections) * n_curves
-      labels <- LETTERS[seq_len(num_labels)]
+    if (missing(x) || length(x) < 3) {
+        stop("'x' must have at least three elements.")
     }
-    
-    if(length(labels) != length(x_intersections) * n_curves) {
-      stop("Number of labels is incorrect.")
+
+    if (missing(y) || length(y) < 3) {
+        stop("'y' must have at least three elements.")
     }
-    
-    intersections <- data.frame()
-    
-    for (j in seq_along(curves)) {
-      x_values <- curves[[j]]$x
-      y_values <- curves[[j]]$y
-      
-      interp_function <- splinefun(x_values, y_values)
-      
-      for (i in seq_along(x_intersections)) {
-        point <- data.frame(x = x_intersections[i], y = interp_function(x_intersections[i]))
-        intersections <- rbind(intersections, point)
-      }
+
+    if (!(all(diff(x) > 0))) {
+        stop("'x' should be in ascending order.")
     }
-    
-    gg <- gg +  geom_segment(data = intersections, aes(x = x, y = 0, xend = x, yend = y), linetype = "dotted") +
-      geom_segment(data = intersections, aes(x = 0, y = y, xend = x, yend = y), linetype = "dotted")  +
-      geom_point(data = intersections, size = 3) +
-      scale_x_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve$x)) + n_curves), breaks = round(intersections$x, 1)) +
-      scale_y_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve$y)) + n_curves), breaks = round(intersections$y, 1)) +
-      geom_text(data = intersections, aes(x = x, y = y, label = labels, vjust = -0.2, hjust = -0.6))
-    
-  } else {
-    
-    gg <- gg + scale_x_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve$x)) + n_curves)) +
-      scale_y_continuous(expand = c(0, 0), limits = c(0,  max(unlist(curve$y)) + n_curves))
-    
-  }
-  
-  gg <- gg + labs(x = xlabel, y = ylabel, title = title) + theme_classic() + coord_equal()
-  
-  out <- list("plot" = gg, "curves" = curves)
-  return(out)
+
+    if (!(all(diff(y) < 0))) {
+        stop("'y' should be in descending order.")
+    }
+
+    curve <- data.frame(bezier(x = x, y = y))
+
+    curves <- list()
+    for (i in 0:(n_curves - 1)) {
+        curves[[i + 1]] <- data.frame(curve) + i
+    }
+
+    gg <- ggplot(mapping = aes(x = x, y = y))
+    for (i in 0:(n_curves - 1)) {
+        gg <- gg + geom_line(data = curves[[i + 1]], color = linecolor, linewidth = 1, linetype = 1)
+    }
+
+    if (!missing(x_intersections)) {
+        if (missing(labels)) {
+            num_labels <- length(x_intersections) * n_curves
+            labels <- LETTERS[seq_len(num_labels)]
+        }
+
+        if (length(labels) != length(x_intersections) * n_curves) {
+            stop("Number of labels is incorrect.")
+        }
+
+        intersections <- data.frame()
+
+        for (j in seq_along(curves)) {
+            x_values <- curves[[j]]$x
+            y_values <- curves[[j]]$y
+
+            interp_function <- splinefun(x_values, y_values)
+
+            for (i in seq_along(x_intersections)) {
+                point <- data.frame(x = x_intersections[i], y = interp_function(x_intersections[i]))
+                intersections <- rbind(intersections, point)
+            }
+        }
+
+        gg <- gg + geom_segment(data = intersections, aes(x = x, y = 0, xend = x, yend = y), linetype = "dotted") +
+            geom_segment(data = intersections, aes(x = 0, y = y, xend = x, yend = y), linetype = "dotted") +
+            geom_point(data = intersections, size = 3) +
+            scale_x_continuous(expand = c(0, 0), limits = c(0, max(unlist(curve$x)) + n_curves), breaks = round(intersections$x, 1)) +
+            scale_y_continuous(expand = c(0, 0), limits = c(0, max(unlist(curve$y)) + n_curves), breaks = round(intersections$y, 1)) +
+            geom_text(data = intersections, aes(x = x, y = y, label = labels, vjust = -0.2, hjust = -0.6))
+    } else {
+        gg <- gg + scale_x_continuous(expand = c(0, 0), limits = c(0, max(unlist(curve$x)) + n_curves)) +
+            scale_y_continuous(expand = c(0, 0), limits = c(0, max(unlist(curve$y)) + n_curves))
+    }
+
+    gg <- gg + labs(x = xlabel, y = ylabel, title = title) + theme_classic() + coord_equal()
+
+    out <- list("plot" = gg, "curves" = curves)
+    return(out)
 }
 
 
@@ -608,7 +605,7 @@ move_curves_along_x_axis <- function(...,
         } else {
             data$x <- data$x + offset
         }
-        
+
         moved_curves[[i]] <- data
 
         gg <- gg + geom_line(data = data, color = colors2[i], linewidth = 1, linetype = 1)
