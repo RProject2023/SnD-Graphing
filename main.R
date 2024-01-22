@@ -9,7 +9,7 @@ library(extras)
 #'
 #' @param   ...: list of points in the form p = (x1, y1, x2, y2)
 #' @param   title: title of the displayed graph
-#' @param   color: colors of the curves
+#' @param   colors: colors of the curves
 #' @param   minX: minimum value of the x-axis coordinate
 #' @param   maxX: maximum value of the x-axis coordinate
 #' @param   minY: minimum value of the y-axis coordinate
@@ -19,11 +19,11 @@ library(extras)
 #' @param   pointsHidden: are the points hidden
 #' @param   lineCoordinateHidden: are the points marked on the coordinates
 #'
-#' @return a new graph with the curves based on the 2 given points
+#' @return a new graph with the curves based on the 2 given points and a list of curves defined by 2 points
 
 linear_curve_2_points <- function(...,
                                   title,
-                                  color,
+                                  colors,
                                   minX = 0,
                                   maxX = 10,
                                   minY = 0,
@@ -33,12 +33,19 @@ linear_curve_2_points <- function(...,
                                   pointsHidden = TRUE,
                                   lineCoordinateHidden = TRUE,
                                   gg = NULL) {
+  
+    if(length(list(...)) != length(colors)) {
+        stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
+    }
+  
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
+
     points_df <- data.frame()
     segments_df <- data.frame()
-
+    curves_list <- list()
+    
     for (i in seq_along(list(...))) {
         points <- unlist(list(...)[[i]])
 
@@ -46,17 +53,23 @@ linear_curve_2_points <- function(...,
         y1 <- points[2]
         x2 <- points[3]
         y2 <- points[4]
-
+        
         x_axis <- c(x1, x2)
         y_axis <- c(y1, y2)
+  
         points_df <- rbind(points_df, data.frame(x = x_axis, y = y_axis))
         segments_df <- rbind(segments_df, data.frame(x = c(x1, x1, minX), y = c(y1, minY, y1), xend = x1, yend = y1))
         segments_df <- rbind(segments_df, data.frame(x = c(x2, x2, minX), y = c(y2, minY, y2), xend = x2, yend = y2))
 
         slope <- (y2 - y1) / (x2 - x1)
         intercept <- y1 - slope * x1
-
-        gg <- gg + geom_abline(intercept = intercept, slope = slope, color = color[i])
+        
+        x_values <- seq(minX, maxX)
+        y_values <- intercept + slope * x_values
+        
+        curves_list[[i]] <- bezier(x = x_values, y = y_values) %>% as.data.frame()
+        
+        gg <- gg + geom_abline(intercept = intercept, slope = slope, color = colors[i], linewidth = 1)
     }
 
     if (!pointsHidden) {
@@ -75,9 +88,9 @@ linear_curve_2_points <- function(...,
 
     gg <- gg +
         labs(title = title, x = xlabel, y = ylabel) +
-        theme_classic()
+        theme_minimal()
 
-    return(gg)
+    return(list("plot" = gg, "curves" = curves_list))
 }
 
 #' @title   Linear curve characteristic
@@ -93,11 +106,11 @@ linear_curve_2_points <- function(...,
 #' @param   xlabel: label of the x-axis
 #' @param   ylabel: label of the y-axis
 #'
-#' @return a new graph with the curves based on the curve's characteristics
+#' @return a new graph with the curves based on the curve's characteristics and a list of curves defined by characteristics
 
 linear_curve_characteristic <- function(...,
                                         title,
-                                        color,
+                                        colors,
                                         minX = 0,
                                         maxX = 10,
                                         minY = 0,
@@ -105,28 +118,40 @@ linear_curve_characteristic <- function(...,
                                         xlabel = "Q - quantity",
                                         ylabel = "P - price",
                                         gg = NULL) {
+  
+    if(length(list(...)) != length(colors)) {
+        stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
+    }
+  
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
+
     points_df <- data.frame()
     segments_df <- data.frame()
-
+    curves_list <- list()
+    
     for (i in seq_along(list(...))) {
         characteristic <- unlist(list(...)[[i]])
 
         slope <- characteristic[1]
         intercept <- characteristic[2]
-
-        gg <- gg + geom_abline(intercept = intercept, slope = slope, color = color[i])
+        
+        x_values <- seq(minX, maxX)
+        y_values <- intercept + slope * x_values
+        
+        curves_list[[i]] <- bezier(x = x_values, y = y_values) %>% as.data.frame()
+        
+        gg <- gg + geom_abline(intercept = intercept, slope = slope, color = colors[i], linewidth = 1)
     }
 
     gg <- gg +
         xlim(minX, maxX) +
         ylim(minY, maxY) +
         labs(title = title, x = xlabel, y = ylabel) +
-        theme_classic()
+        theme_minimal()
 
-    return(gg)
+    return(list("plot" = gg, "curves" = curves_list))
 }
 
 #' @title  Curve by N points
@@ -142,7 +167,7 @@ linear_curve_characteristic <- function(...,
 
 curve_N_points <- function(...,
                            title,
-                           color,
+                           colors,
                            minX = 0,
                            maxX = 10,
                            minY = 0,
@@ -152,20 +177,24 @@ curve_N_points <- function(...,
                            gg = NULL) {
     curve <- list(...)
     ncurve <- length(curve)
-
+    
+    if(length(list(...)) != length(colors)) {
+      stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
+    }
+    
     if (is.null(gg)) {
         gg <- ggplot(mapping = aes(x = x, y = y))
     }
 
     for (i in 1:length(curve)) {
-        gg <- gg + geom_line(data = data.frame(curve[[i]]), color = color[i], linewidth = 1, linetype = 1)
+        gg <- gg + geom_line(data = data.frame(curve[[i]]), color = colors[i], linewidth = 1, linetype = 1)
     }
 
     gg <- gg +
         xlim(minX, maxX) +
         ylim(minY, maxY) +
         labs(x = xlabel, y = ylabel, title = title) +
-        theme_classic()
+        theme_minimal()
 
     return(gg)
 }
@@ -224,7 +253,8 @@ curve_by_function <- function(...,
     }
     
     gg <- gg + labs(title = title, x = xlabel, y = ylabel) +
-        coord_cartesian(ylim = c(minY, maxY))
+        coord_cartesian(ylim = c(minY, maxY)) +
+        theme_minimal()
 
     # add curves
     for (i in 1:ncurves) {
@@ -471,7 +501,7 @@ indifference_curve <- function(x,
             scale_y_continuous(expand = c(0, 0), limits = c(0, max(unlist(curve$y)) + n_curves))
     }
 
-    gg <- gg + labs(x = xlabel, y = ylabel, title = title) + theme_classic() + coord_equal()
+    gg <- gg + labs(x = xlabel, y = ylabel, title = title) + theme_minimal()
 
     out <- list("plot" = gg, "curves" = curves)
     return(out)
@@ -537,7 +567,7 @@ production_possibility_frontier <- function(...,
 
     gg <- gg +
         labs(x = xlabel, y = ylabel, title = title) +
-        theme_classic()
+        theme_minimal()
 
     return(gg)
 }
@@ -615,6 +645,7 @@ move_curves_along_x_axis <- function(...,
     }
 
     gg <- gg +
+        theme_minimal() +
         labs(title = title, x = xlabel, y = ylabel)
 
     return(list("plot" = gg, "moved_curves" = moved_curves))

@@ -13,7 +13,7 @@ source("main.R")
 
 -   **title**: naslov prikazanog grafa
 
--   **color**: boje krivulja
+-   **colors**: boje krivulja
 
 -   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
 
@@ -36,18 +36,33 @@ Prikaz ponude
 ```{r}
 p1 <- c(3, 3, 6, 7)
 
-linear_curve_2_points(p1, title = "Supply", color = "red", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+linear_curve_supply = linear_curve_2_points(p1, title = "Supply", colors = "red", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+
+supply_curve = linear_curve_supply$curves
+supply_plot = linear_curve_supply$plot
+
+supply_plot
 ```
 
 Prikaz potražnje
 
 ```{r}
 p2 <- c(2, 9, 5, 5)
-linear_curve_2_points(p2, title = "Demand", color = "blue", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+linear_curve_demand = linear_curve_2_points(p2, title = "Demand", colors = "blue", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+
+demand_curve = linear_curve_demand$curves
+demand_plot = linear_curve_demand$plot
+
+demand_plot
 ```
 
 ```{r}
-linear_curve_2_points(p1, p2, title = "Supply & Demand", color = c("red", "blue"))
+linear_curve_supply_demand = linear_curve_2_points(p1, p2, title = "Supply & Demand", colors = c("red", "blue"))
+
+supply_demand_curves = linear_curve_supply_demand$curves
+
+supply_demand_plot = linear_curve_supply_demand$plot
+supply_demand_plot
 ```
 
 **FUNKCIJA**: *`linear_curve_characteristic`*
@@ -56,7 +71,7 @@ linear_curve_2_points(p1, p2, title = "Supply & Demand", color = c("red", "blue"
 
 -   **title**: naslov prikazanog grafa
 
--   **color**: boje krivulja
+-   **colors**: boje krivulja
 
 -   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
 
@@ -71,7 +86,13 @@ linear_curve_2_points(p1, p2, title = "Supply & Demand", color = c("red", "blue"
 -   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
 
 ```{r}
-linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", color = c("red", "blue"))
+linear_curve_characteristic_supply_demand = linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colors = c("red", "blue"))
+
+supply_demand_curves = linear_curve_characteristic_supply_demand$curves
+supply_demand_plot_2 = linear_curve_characteristic_supply_demand$plot
+
+supply_demand_plot_2
+
 ```
 
 **FUNKCIJA**: *`curve_N_points`*
@@ -80,7 +101,7 @@ linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colo
 
 -   **title**: naslov prikazanog grafa
 
--   **color**: boje krivulja
+-   **colors**: boje krivulja
 
 -   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
 
@@ -95,10 +116,10 @@ linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colo
 -   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
 
 ```{r}
-supply <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
-demand <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
+supply <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
+demand <- bezier(x = c(0, 3, 10), y = c(10, 3, 0)) %>% as.data.frame()
 
-curve_N_points(supply, demand, title = "Supply & Demand", color = c("blue", "red"))
+curve_N_points(supply, demand, title = "Supply & Demand", colors = c("blue", "red"))
 ```
 
 **FUNKCIJA**: *`equilibrium`*
@@ -110,10 +131,7 @@ curve_N_points(supply, demand, title = "Supply & Demand", color = c("blue", "red
 -   **gg**: graf na kojem će se iscrtati točka presjeka prve i druge krivulje
 
 ```{r}
-supply <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
-demand <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
-
-gg <- curve_N_points(supply, demand, title = "Supply & Demand", color = c("blue", "red", "pink"))
+gg <- curve_N_points(supply, demand, title = "Supply & Demand", colors = c("blue", "red"))
 
 PoE <- equilibrium(supply, demand, gg)
 gg <- PoE$plot
@@ -133,13 +151,15 @@ gg
 
 -   **color**: boja točke presjeka krivulja, **DEFAULT**="green"
 
--  **displayValue**: prikaz vrijednosti točke presjeka, **DEFAULT**=TRUE
+-   **displayValue**: prikaz vrijednosti točke presjeka, **DEFAULT**=TRUE
+
+-   
 
 ```{r}
-supply_sr <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
-demand_sr <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
+supply_sr <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
+demand_sr <- bezier(x = c(0, 3, 10), y = c(10, 3, 0)) %>% as.data.frame()
 
-gg_sr <- curve_N_points(supply_sr, demand_sr, title = "Supply & Demand", color = c("blue", "red"))
+gg_sr <- curve_N_points(supply_sr, demand_sr, title = "Supply & Demand", colors = c("blue", "red"))
 
 rev <- supplier_revenue(supply_sr, demand_sr, gg_sr, color = "purple")
 
@@ -156,12 +176,12 @@ gg_sr
 -   **curve2**: druga krivulja
 
 -   **gg**: plot na kojem se nalaze krivulje
-  
-```{r}
-supply_srp <- bezier(x = c(1, 8, 9), y = c(1, 5, 9)) %>% as.data.frame()
-demand_srp <- bezier(x = c(1, 3, 9), y = c(9, 3, 1)) %>% as.data.frame()
 
-gg_srp <- curve_N_points(supply_srp, demand_srp, title = "Supply & Demand", color = c("blue", "red"))
+```{r}
+supply_srp <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
+demand_srp <- bezier(x = c(0, 3, 10), y = c(10, 3, 0)) %>% as.data.frame()
+
+gg_srp <- curve_N_points(supply_srp, demand_srp, title = "Supply & Demand", colors = c("blue", "red"))
 
 surplus <- surplus_area(supply_srp, demand_srp, gg_srp)
 
@@ -188,16 +208,16 @@ surplus
 
 -   **ylabel**: oznaka y osi, **DEFAULT**="Y"
 
-
 ```{r}
 indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), n_curves = 3)
 
-indif
+indif$plot
 ```
+
 ```{r}
 indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), x_intersections = c(3, 6))
 
-indif
+indif$plot
 ```
 
 **FUNKCIJA**: *`production_possibility_frontier`*
@@ -222,23 +242,22 @@ production_possibility_frontier(curve_data, colors = "red", x = c(2, 5, 8), labe
 
 curve_data1 <- bezier(x = c(0, 5, 9, 13), y = c(11, 9, 6, 0)) %>% as.data.frame()
 curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame()
-production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(3, 7, 10), labels = c("A", "B", "C", "D", "E", "F"))
+production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(4, 9), labels = c("A", "B", "C", "D"))
 ```
 
 **FUNKCIJA**: *`isoquant`*
 
 -   **L**: lista vrijednosti rada
-  
+
 -   **K**: lista vrijednosti kapitala
-  
+
 -   **output_levels**: lista razina proizvodnje
-  
+
 -   **A**: parametar proizvodnje
-  
+
 -   **alpha**: elastičnost proizvodnje rada
-  
+
 -   **beta**: elastičnost proizvodnje kapitala
-  
 
 ```{r}
 L <- seq(1, 100, length.out = 100)
@@ -251,7 +270,6 @@ beta <- 0.5
 
 isoquant(L, K, output_levels, A, alpha, beta)
 ```
-
 
 **FUNKCIJA**: *`curve_by_function`*
 
@@ -277,7 +295,7 @@ isoquant(L, K, output_levels, A, alpha, beta)
 
 -   **pointLabel**: oznaka uz točku (u obliku liste)
 
--   **axisValues**: lista vrijednosti za prikazati na osi x 
+-   **axisValues**: lista vrijednosti za prikazati na osi x
 
 -   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=-50
 
@@ -294,27 +312,31 @@ my_function1 <- function(x) {
 
 curve_by_function(my_function1)
 ```
+
 Naslov, boja, nazivi na osima.
+
 ```{r}
 curve_by_function(my_function1, title = "Demand", color = "red", xlabel = "Q", ylabel = "P")
 ```
+
 Prikaz određenih brojki na osima
+
 ```{r}
 axis_values <- c(10, 20, 35)
 
 curve_by_function(my_function1, axisValues = axis_values)
 ```
+
 Dodavanje natpisa uz krivulje
+
 ```{r}
 curve_by_function(my_function1, label = "D")
 ```
 
-Dodavanje točaka:
--   dodavanje linija prema osima iz tih točaka
--   označavanje na osima vrijednosti koje tim točkama pripadaju
--   dodavanje imena točkama
+Dodavanje točaka: - dodavanje linija prema osima iz tih točaka - označavanje na osima vrijednosti koje tim točkama pripadaju - dodavanje imena točkama
 
-1. Dodavanje točaka uz specifikaciju koordinata
+1.  Dodavanje točaka uz specifikaciju koordinata
+
 ```{r}
 point_x <- c(10, 20, 0)
 point_y <- c(400, 700, 300)
@@ -322,7 +344,9 @@ labels <- c("A", "B", "C")
 
 curve_by_function(my_function1, x_coordinates = point_x, y_coordinates = point_y, pointColor = "red", pointLabel = labels)
 ```
-2. Dodavanje točaka kao sjecište zadane krivulje i pravca x="zadana vrijednost"
+
+2.  Dodavanje točaka kao sjecište zadane krivulje i pravca x="zadana vrijednost"
+
 ```{r}
 point_x <- c(10, 20, 0)
 labels <- c("A", "B", "C")
@@ -331,6 +355,7 @@ curve_by_function(my_function1, x_coordinates = point_x, pointColor = "red", poi
 ```
 
 Dodavanje točaka bez linija prema osima, bez pripadnih vrijednosti na osima i bez imena točaka.
+
 ```{r}
 my_function1 <- function(x) {
     return(x^2)
@@ -340,7 +365,9 @@ labels <- c("A", "B", "C")
 
 curve_by_function(my_function1, x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
 ```
+
 Više funkcija
+
 ```{r}
 my_function2 <- function(x) {
     return(40 * x)
@@ -350,25 +377,31 @@ curve_by_function(my_function1, my_function2)
 ```
 
 Dodavanje boje i natpisa za svaku krivulju.
+
 ```{r}
 curveLabels <- c("D", "S")
 
 curve_by_function(my_function1, my_function2, title = "Demand", color = c("red", "blue"), label = curveLabels)
 ```
-Dodavanje točaka. 
+
+Dodavanje točaka.
+
 ```{r}
 point_x <- c(10, 20, 0)
 
 
 curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x)
 ```
+
 ```{r}
 point_x <- c(10, 20, 0)
 labels <- c("A", "a", "B", "b", "C", "c")
 
 curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
 ```
+
 Više od dvije funkcije
+
 ```{r}
 my_function3 <- function(x) {
     return(-30 * x)
@@ -398,7 +431,6 @@ curve_by_function(my_function1, my_function2, my_function3, color = c("red", "bl
 -   **xlabel**: oznaka x osi, **DEFAULT**="x"
 
 -   **ylabel**: oznaka y osi, **DEFAULT**="y"
-
 
 Pomicanje grafa po x osi
 
