@@ -18,6 +18,7 @@ library(extras)
 #' @param   ylabel: label of the y-axis
 #' @param   pointsHidden: are the points hidden
 #' @param   lineCoordinateHidden: are the points marked on the coordinates
+#' @param   gg: graph on which the linear curves will be plotted
 #'
 #' @return a new graph with the curves based on the 2 given points and a list of curves defined by 2 points
 
@@ -105,6 +106,7 @@ linear_curve_2_points <- function(...,
 #' @param   maxY: maximum value of the y-axis coordinate
 #' @param   xlabel: label of the x-axis
 #' @param   ylabel: label of the y-axis
+#' @param   gg: graph on which the linear curves will be plotted
 #'
 #' @return a new graph with the curves based on the curve's characteristics and a list of curves defined by characteristics
 
@@ -159,9 +161,14 @@ linear_curve_characteristic <- function(...,
 #'
 #' @param   ...: list of curves in the form curve <- bezier(x = c(x1, x2, x3...), y = c(y1, y2, y3...)) %>% as.data.frame()
 #' @param   title: title of the displayed graph
-#' @param   color: colors of the curves
+#' @param   colors: colors of the curves
+#' @param   minX: minimum value of the x-axis coordinate
+#' @param   maxX: maximum value of the x-axis coordinate
+#' @param   minY: minimum value of the y-axis coordinate
+#' @param   maxY: maximum value of the y-axis coordinate
 #' @param   xlabel: label of the x-axis
 #' @param   ylabel: label of the y-axis
+#' @param   gg: graph on which the curves will be plotted
 #'
 #' @return a modified graph with the curves based on the given points
 
@@ -220,6 +227,7 @@ curve_N_points <- function(...,
 #' @param maxX: Maximum value of the x-axis coordinate.
 #' @param minY: Minimum value of the y-axis coordinate.
 #' @param maxY: Maximum value of the y-axis coordinate.
+#' @param gg: graph on which the curves will be plotted
 #'
 #' @return A new graph with the curves based on the given functions.
 
@@ -356,9 +364,9 @@ equilibrium <- function(curve1, curve2, gg) {
 #'
 #' @param  curve1: first curve
 #' @param  curve2: second curve
-#' @param gg: graph on which the revenue will be plotted
-#' @param color: color of the revenue line
-#' @param displayValue: display the revenue value on the graph
+#' @param  gg: graph on which the revenue will be plotted
+#' @param  color: color of the revenue line
+#' @param  displayValue: display the revenue value on the graph
 #'
 #' @return a list containing the modified graph with the supplier's revenue and the revenue value
 

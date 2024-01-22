@@ -31,6 +31,8 @@ source("main.R")
 
 -   **lineCoordinateHidden**: jesu li točke označene na koordinatama, **DEFAULT**=TRUE
 
+-   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
+
 Prikaz ponude
 
 ```{r}
@@ -83,7 +85,9 @@ supply_demand_plot
 
 -   **xlabel**: oznaka x osi, **DEFAULT**="Q - quantity"
 
--   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
+-   **ylabel**: oznaka y osi, **DEFAULT**="P - price"ž
+
+-   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
 
 ```{r}
 linear_curve_characteristic_supply_demand = linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colors = c("red", "blue"))
@@ -114,6 +118,8 @@ supply_demand_plot_2
 -   **xlabel**: oznaka x osi, **DEFAULT**="Q - quantity"
 
 -   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
+
+-   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
 
 ```{r}
 supply <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
@@ -152,8 +158,6 @@ gg
 -   **color**: boja točke presjeka krivulja, **DEFAULT**="green"
 
 -   **displayValue**: prikaz vrijednosti točke presjeka, **DEFAULT**=TRUE
-
--   
 
 ```{r}
 supply_sr <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
@@ -305,6 +309,8 @@ isoquant(L, K, output_levels, A, alpha, beta)
 
 -   **maxY**: maksimalna vrijednost koordinatne osi y, **DEFAULT**=2500
 
+-   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
+
 ```{r}
 my_function1 <- function(x) {
     return(x^2)
@@ -333,7 +339,10 @@ Dodavanje natpisa uz krivulje
 curve_by_function(my_function1, label = "D")
 ```
 
-Dodavanje točaka: - dodavanje linija prema osima iz tih točaka - označavanje na osima vrijednosti koje tim točkama pripadaju - dodavanje imena točkama
+Dodavanje točaka: \
+- dodavanje linija prema osima iz tih točaka\
+- označavanje na osima vrijednosti koje tim točkama pripadaju \
+- dodavanje imena točkama
 
 1.  Dodavanje točaka uz specifikaciju koordinata
 
