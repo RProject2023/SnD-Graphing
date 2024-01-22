@@ -31,8 +31,12 @@ linear_curve_2_points <- function(...,
                                   xlabel = "Q - quantity",
                                   ylabel = "P - price",
                                   pointsHidden = TRUE,
-                                  lineCoordinateHidden = TRUE) {
-    gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
+                                  lineCoordinateHidden = TRUE,
+                                  gg = NULL) {
+  
+    if (is.null(gg)) {
+        gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
+    }
     points_df <- data.frame()
     segments_df <- data.frame()
 
@@ -100,8 +104,12 @@ linear_curve_characteristic <- function(...,
                                         minY = 0,
                                         maxY = 10,
                                         xlabel = "Q - quantity",
-                                        ylabel = "P - price") {
-    gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
+                                        ylabel = "P - price",
+                                        gg = NULL) {
+  
+    if (is.null(gg)) {
+        gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
+    }
     points_df <- data.frame()
     segments_df <- data.frame()
 
@@ -127,17 +135,27 @@ linear_curve_characteristic <- function(...,
 curve_N_points <- function(...,
                            title,
                            color,
+                           minX = 0,
+                           maxX = 10,
+                           minY = 0,
+                           maxY = 10,
                            xlabel = "Q - quantity",
-                           ylabel = "P - price") {
+                           ylabel = "P - price",
+                           gg = NULL) {
     curve <- list(...)
     ncurve <- length(curve)
-    gg <- ggplot(mapping = aes(x = x, y = y))
+    
+    if (is.null(gg)) {
+        gg <- ggplot(mapping = aes(x = x, y = y))
+    }
 
     for (i in 1:length(curve)) {
         gg <- gg + geom_line(data = data.frame(curve[[i]]), color = color[i], linewidth = 1, linetype = 1)
     }
 
     gg <- gg +
+        xlim(minX, maxX) +
+        ylim(minY, maxY) +
         labs(x = xlabel, y = ylabel, title = title) +
         theme_classic()
 
@@ -478,10 +496,13 @@ production_possibility_frontier <- function(...,
                                             x,
                                             labels,
                                             xlabel = "Product A",
-                                            ylabel = "Product B") {
+                                            ylabel = "Product B",
+                                            gg = NULL) {
     curves <- list(...)
 
-    gg <- ggplot(mapping = aes(x = x, y = y))
+    if (is.null(gg)) {
+        gg <- ggplot(mapping = aes(x = x, y = y))
+    }
 
     for (i in seq_along(curves)) {
         gg <- gg + geom_line(data = data.frame(curves[[i]]), color = colors[i], linewidth = 1, linetype = 1)
