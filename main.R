@@ -266,7 +266,7 @@ curve_by_function <- function(...,
 
     # add curves
     for (i in 1:ncurves) {
-        gg <- gg + stat_function(fun = curves[[i]], colour = color[i])
+        gg <- gg + stat_function(fun = curves[[i]], colour = color[i], linewidth = 1)
     }
 
     # add curve names
@@ -590,14 +590,21 @@ production_possibility_frontier <- function(...,
 #' @param  A: technology of the production process
 #' @param  alpha: the elasticity of production of labor
 #' @param  beta: the elasticity of production of capital
+#' @param  color: color of the curves
 #'
 #' @return a new graph with the isoquant curve(s) for the given production function
 
-isoquant <- function(L, K, output_levels, A, alpha, beta) {
+isoquant <- function(L,
+                     K,
+                     output_levels,
+                     A,
+                     alpha,
+                     beta,
+                     color = "black") {
     data <- expand.grid(L = L, K = K)
     data$Q <- A * pow(data$L, alpha) * pow(data$K, beta) # formula for COBB-DOUGLAS production function
     ggplot(data, aes(x = L, y = K, z = Q)) +
-        geom_contour(aes(z = Q), breaks = output_levels, color = "blue", linetype = "solid", size = 0.8) +
+        geom_contour(aes(z = Q), breaks = output_levels, color = color, linetype = "solid", linewidth = 1) +
         labs(x = "Labor (L)", y = "Capital (K)", title = paste("Isoquant Curve(s) for Q =", paste(output_levels, collapse = ", "))) +
         theme_minimal()
 }

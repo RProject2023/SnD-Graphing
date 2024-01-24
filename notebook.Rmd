@@ -128,6 +128,240 @@ demand <- bezier(x = c(0, 3, 10), y = c(10, 3, 0)) %>% as.data.frame()
 curve_N_points(supply, demand, title = "Supply & Demand", colors = c("blue", "red"))
 ```
 
+**FUNKCIJA**: *`curve_by_function`*
+
+-   **...** : jedna ili više ulaznih funkcija
+
+-   **title**: naslov prikazanog grafa
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="Q - quantity"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
+
+-   **color**: boje krivulja (u obliku liste), **DEFAULT**="blue"
+
+-   **label**: oznaka uz krivulju (u obliku liste)
+
+-   **x_coordinates**: lista x koordinata točaka
+
+-   **y_coordinates**: lista y koordinata točaka
+
+-   **pointColor**: boja točaka (u obliku liste), **DEFAULT**="blue"
+
+-   **showInfo**: zastavica za prikaz koordinata točaka na osima, **DEFAULT**="TRUE"
+
+-   **pointLabel**: oznaka uz točku (u obliku liste)
+
+-   **axisValues**: lista vrijednosti za prikazati na osi x
+
+-   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=-50
+
+-   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=50
+
+-   **minY**: minimalna vrijednost koordinatne osi y, **DEFAULT**=-100
+
+-   **maxY**: maksimalna vrijednost koordinatne osi y, **DEFAULT**=2500
+
+-   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
+
+```{r}
+my_function1 <- function(x) {
+    return(x^2)
+}
+
+curve_by_function(my_function1)
+```
+
+Naslov, boja, nazivi na osima.
+
+```{r}
+curve_by_function(my_function1, title = "Supply", color = "red", xlabel = "Q", ylabel = "P")
+```
+
+Prikaz određenih brojki na osima
+
+```{r}
+axis_values <- c(10, 20, 35)
+
+curve_by_function(my_function1, axisValues = axis_values)
+```
+
+Dodavanje natpisa uz krivulje
+
+```{r}
+curve_by_function(my_function1, label = "D")
+```
+
+Dodavanje točaka:\
+- dodavanje linija prema osima iz tih točaka\
+- označavanje na osima vrijednosti koje tim točkama pripadaju\
+- dodavanje imena točkama
+
+1.  Dodavanje točaka uz specifikaciju koordinata
+
+```{r}
+point_x <- c(10, 20, 0)
+point_y <- c(400, 700, 300)
+labels <- c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, y_coordinates = point_y, pointColor = "red", pointLabel = labels)
+```
+
+2.  Dodavanje točaka kao sjecište zadane krivulje i pravca x="zadana vrijednost"
+
+```{r}
+point_x <- c(10, 20, 0)
+labels <- c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, pointColor = "red", pointLabel = labels)
+```
+
+Dodavanje točaka bez linija prema osima, bez pripadnih vrijednosti na osima i bez imena točaka.
+
+```{r}
+my_function1 <- function(x) {
+    return(x^2)
+}
+point_x <- c(10, 20, 0)
+labels <- c("A", "B", "C")
+
+curve_by_function(my_function1, x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
+```
+
+Više funkcija
+
+```{r}
+my_function2 <- function(x) {
+    return(-50 * x + 2200)
+}
+
+curve_by_function(my_function1, my_function2)
+```
+
+Dodavanje boje i natpisa za svaku krivulju.
+
+```{r}
+curveLabels <- c("S", "D")
+
+curve_by_function(my_function1, my_function2, title = "Supply & Demand", color = c("red", "blue"), label = curveLabels)
+```
+
+Dodavanje točaka.
+
+```{r}
+point_x <- c(10, 20, 0)
+
+
+curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x)
+```
+
+```{r}
+point_x <- c(10, 20, 0)
+labels <- c("A", "a", "B", "b", "C", "c")
+
+curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
+```
+
+Više od dvije funkcije
+
+```{r}
+my_function3 <- function(x) {
+    return(-60 * x + 2000)
+}
+
+curve_by_function(my_function1, my_function2, my_function3, color = c("red", "blue", "purple"))
+```
+
+**FUNKCIJA**: *`move_curves_along_x_axis`*
+
+-   **...** : lista krivulja
+
+-   **offset** : pomak, **DEFAULT**=0
+
+-   **is_percentage** : je li pomak zadan u postotku, **DEFAULT**=FALSE
+
+-   **title**: naslov prikazanog grafa, **DEFAULT**="Move along x-axis"
+
+-   **color**: boje orginalnih krivulja, **DEFAULT**="blue"
+
+-   **color2**: boje pomaknutih krivulja, **DEFAULT**="red"
+
+-   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
+
+-   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=20
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="x"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="y"
+
+Pomicanje grafa po x osi
+
+```{r}
+curve_data <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
+move_curves_along_x_axis(curve_data, offset = 5)$plot
+move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)$plot
+```
+
+**FUNKCIJA**: *`indifference_curve`*
+
+-   **x**: točke na x osi na temelju kojih se crta krivulja
+
+-   **y**: točke na y osi na temelju kojih se crta krivulja
+
+-   **n_curves**: broj krivulja, **DEFAULT**="1"
+
+-   **x_intersections**: X vrijednosti gdje se nalaze sjecišta
+
+-   **labels**: oznake sjecišta
+
+-   **linecolor**: boje krivulja, **DEFAULT**="black"
+
+-   **title**: naslov prikazanog grafa, **DEFAULT**="Indifference curve"
+
+-   **xlabel**: oznaka x osi, **DEFAULT**="X"
+
+-   **ylabel**: oznaka y osi, **DEFAULT**="Y"
+
+```{r}
+indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), n_curves = 3)
+
+indif$plot
+```
+
+```{r}
+indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), x_intersections = c(3, 6))
+
+indif$plot
+```
+
+**FUNKCIJA**: *`isoquant`*
+
+-   **L**: lista vrijednosti rada
+
+-   **K**: lista vrijednosti kapitala
+
+-   **output_levels**: lista razina proizvodnje
+
+-   **A**: parametar proizvodnje
+
+-   **alpha**: elastičnost proizvodnje rada
+
+-   **beta**: elastičnost proizvodnje kapitala
+
+-   **color**: boje krivulja, **DEFAULT**="black"
+
+```{r}
+L <- seq(1, 100, length.out = 100)
+K <- seq(1, 100, length.out = 100)
+output_levels <- c(25, 50, 75)
+
+A <- 1
+alpha <- 0.5
+beta <- 0.5
+
+isoquant(L, K, output_levels, A, alpha, beta)
+```
+
 **FUNKCIJA**: *`equilibrium`*
 
 -   **curve1** : prva krivulja
@@ -192,38 +426,6 @@ surplus <- surplus_area(supply_srp, demand_srp, gg_srp)
 surplus
 ```
 
-**FUNKCIJA**: *`indifference_curve`*
-
--   **x**: točke na x osi na temelju kojih se crta krivulja
-
--   **y**: točke na y osi na temelju kojih se crta krivulja
-
--   **n_curves**: broj krivulja, **DEFAULT**="1"
-
--   **x_intersections**: X vrijednosti gdje se nalaze sjecišta
-
--   **labels**: oznake sjecišta
-
--   **linecolor**: boje krivulja, **DEFAULT**="black"
-
--   **title**: naslov prikazanog grafa, **DEFAULT**="Indifference curve"
-
--   **xlabel**: oznaka x osi, **DEFAULT**="X"
-
--   **ylabel**: oznaka y osi, **DEFAULT**="Y"
-
-```{r}
-indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), n_curves = 3)
-
-indif$plot
-```
-
-```{r}
-indif <- indifference_curve(x = c(1, 2, 5, 10), y = c(10, 7, 3, 1), x_intersections = c(3, 6))
-
-indif$plot
-```
-
 **FUNKCIJA**: *`production_possibility_frontier`*
 
 -   **...** : granice proizvodnih mogućnosti
@@ -247,204 +449,4 @@ production_possibility_frontier(curve_data, colors = "red", x = c(2, 5, 8), labe
 curve_data1 <- bezier(x = c(0, 5, 9, 13), y = c(11, 9, 6, 0)) %>% as.data.frame()
 curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame()
 production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(4, 9), labels = c("A", "B", "C", "D"))
-```
-
-**FUNKCIJA**: *`isoquant`*
-
--   **L**: lista vrijednosti rada
-
--   **K**: lista vrijednosti kapitala
-
--   **output_levels**: lista razina proizvodnje
-
--   **A**: parametar proizvodnje
-
--   **alpha**: elastičnost proizvodnje rada
-
--   **beta**: elastičnost proizvodnje kapitala
-
-```{r}
-L <- seq(1, 100, length.out = 100)
-K <- seq(1, 100, length.out = 100)
-output_levels <- c(25, 50, 75)
-
-A <- 1
-alpha <- 0.5
-beta <- 0.5
-
-isoquant(L, K, output_levels, A, alpha, beta)
-```
-
-**FUNKCIJA**: *`curve_by_function`*
-
--   **...** : jedna ili više ulaznih funkcija
-
--   **title**: naslov prikazanog grafa
-
--   **xlabel**: oznaka x osi, **DEFAULT**="Q - quantity"
-
--   **ylabel**: oznaka y osi, **DEFAULT**="P - price"
-
--   **color**: boje krivulja (u obliku liste), **DEFAULT**="blue"
-
--   **label**: oznaka uz krivulju (u obliku liste)
-
--   **x_coordinates**: lista x koordinata točaka
-
--   **y_coordinates**: lista y koordinata točaka
-
--   **pointColor**: boja točaka (u obliku liste), **DEFAULT**="blue"
-
--   **showInfo**: zastavica za prikaz koordinata točaka na osima, **DEFAULT**="TRUE"
-
--   **pointLabel**: oznaka uz točku (u obliku liste)
-
--   **axisValues**: lista vrijednosti za prikazati na osi x
-
--   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=-50
-
--   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=50
-
--   **minY**: minimalna vrijednost koordinatne osi y, **DEFAULT**=-100
-
--   **maxY**: maksimalna vrijednost koordinatne osi y, **DEFAULT**=2500
-
--   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
-
-```{r}
-my_function1 <- function(x) {
-    return(x^2)
-}
-
-curve_by_function(my_function1)
-```
-
-Naslov, boja, nazivi na osima.
-
-```{r}
-curve_by_function(my_function1, title = "Demand", color = "red", xlabel = "Q", ylabel = "P")
-```
-
-Prikaz određenih brojki na osima
-
-```{r}
-axis_values <- c(10, 20, 35)
-
-curve_by_function(my_function1, axisValues = axis_values)
-```
-
-Dodavanje natpisa uz krivulje
-
-```{r}
-curve_by_function(my_function1, label = "D")
-```
-
-Dodavanje točaka:\
-- dodavanje linija prema osima iz tih točaka\
-- označavanje na osima vrijednosti koje tim točkama pripadaju\
-- dodavanje imena točkama
-
-1.  Dodavanje točaka uz specifikaciju koordinata
-
-```{r}
-point_x <- c(10, 20, 0)
-point_y <- c(400, 700, 300)
-labels <- c("A", "B", "C")
-
-curve_by_function(my_function1, x_coordinates = point_x, y_coordinates = point_y, pointColor = "red", pointLabel = labels)
-```
-
-2.  Dodavanje točaka kao sjecište zadane krivulje i pravca x="zadana vrijednost"
-
-```{r}
-point_x <- c(10, 20, 0)
-labels <- c("A", "B", "C")
-
-curve_by_function(my_function1, x_coordinates = point_x, pointColor = "red", pointLabel = labels)
-```
-
-Dodavanje točaka bez linija prema osima, bez pripadnih vrijednosti na osima i bez imena točaka.
-
-```{r}
-my_function1 <- function(x) {
-    return(x^2)
-}
-point_x <- c(10, 20, 0)
-labels <- c("A", "B", "C")
-
-curve_by_function(my_function1, x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
-```
-
-Više funkcija
-
-```{r}
-my_function2 <- function(x) {
-    return(40 * x)
-}
-
-curve_by_function(my_function1, my_function2)
-```
-
-Dodavanje boje i natpisa za svaku krivulju.
-
-```{r}
-curveLabels <- c("D", "S")
-
-curve_by_function(my_function1, my_function2, title = "Demand", color = c("red", "blue"), label = curveLabels)
-```
-
-Dodavanje točaka.
-
-```{r}
-point_x <- c(10, 20, 0)
-
-
-curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x)
-```
-
-```{r}
-point_x <- c(10, 20, 0)
-labels <- c("A", "a", "B", "b", "C", "c")
-
-curve_by_function(my_function1, my_function2, color = c("red", "blue"), x_coordinates = point_x, pointLabel = labels, showInfo = FALSE)
-```
-
-Više od dvije funkcije
-
-```{r}
-my_function3 <- function(x) {
-    return(-30 * x)
-}
-
-curve_by_function(my_function1, my_function2, my_function3, color = c("red", "blue", "purple"))
-```
-
-**FUNKCIJA**: *`move_curves_along_x_axis`*
-
--   **...** : lista krivulja
-
--   **offset** : pomak, **DEFAULT**=0
-
--   **is_percentage** : je li pomak zadan u postotku, **DEFAULT**=FALSE
-
--   **title**: naslov prikazanog grafa, **DEFAULT**="Move along x-axis"
-
--   **color**: boje orginalnih krivulja, **DEFAULT**="blue"
-
--   **color2**: boje pomaknutih krivulja, **DEFAULT**="red"
-
--   **minX**: minimalna vrijednost koordinatne osi x, **DEFAULT**=0
-
--   **maxX**: maksimalna vrijednost koordinatne osi x, **DEFAULT**=20
-
--   **xlabel**: oznaka x osi, **DEFAULT**="x"
-
--   **ylabel**: oznaka y osi, **DEFAULT**="y"
-
-Pomicanje grafa po x osi
-
-```{r}
-curve_data <- bezier(x = c(3, 5, 11), y = c(9, 3, 1)) %>% as.data.frame()
-move_curves_along_x_axis(curve_data, offset = 5)$plot
-move_curves_along_x_axis(curve_data, offset = 20, is_percentage = TRUE)$plot
 ```
