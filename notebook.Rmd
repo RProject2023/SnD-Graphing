@@ -38,10 +38,10 @@ Prikaz ponude
 ```{r}
 p1 <- c(3, 3, 6, 7)
 
-linear_curve_supply = linear_curve_2_points(p1, title = "Supply", colors = "red", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+linear_curve_supply <- linear_curve_2_points(p1, title = "Supply", colors = "red", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
 
-supply_curve = linear_curve_supply$curves
-supply_plot = linear_curve_supply$plot
+supply_curve <- linear_curve_supply$curves
+supply_plot <- linear_curve_supply$plot
 
 supply_plot
 ```
@@ -50,20 +50,20 @@ Prikaz potražnje
 
 ```{r}
 p2 <- c(2, 9, 5, 5)
-linear_curve_demand = linear_curve_2_points(p2, title = "Demand", colors = "blue", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
+linear_curve_demand <- linear_curve_2_points(p2, title = "Demand", colors = "blue", pointsHidden = FALSE, lineCoordinateHidden = FALSE)
 
-demand_curve = linear_curve_demand$curves
-demand_plot = linear_curve_demand$plot
+demand_curve <- linear_curve_demand$curves
+demand_plot <- linear_curve_demand$plot
 
 demand_plot
 ```
 
 ```{r}
-linear_curve_supply_demand = linear_curve_2_points(p1, p2, title = "Supply & Demand", colors = c("red", "blue"))
+linear_curve_supply_demand <- linear_curve_2_points(p1, p2, title = "Supply & Demand", colors = c("red", "blue"))
 
-supply_demand_curves = linear_curve_supply_demand$curves
+supply_demand_curves <- linear_curve_supply_demand$curves
 
-supply_demand_plot = linear_curve_supply_demand$plot
+supply_demand_plot <- linear_curve_supply_demand$plot
 supply_demand_plot
 ```
 
@@ -90,13 +90,12 @@ supply_demand_plot
 -   **gg**: graf na kojem će biti nacrtane krivulje, **DEFAULT**=NULL
 
 ```{r}
-linear_curve_characteristic_supply_demand = linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colors = c("red", "blue"))
+linear_curve_characteristic_supply_demand <- linear_curve_characteristic(c(2, -5), c(-2, 10), title = "Supply & Demand", colors = c("red", "blue"))
 
-supply_demand_curves = linear_curve_characteristic_supply_demand$curves
-supply_demand_plot_2 = linear_curve_characteristic_supply_demand$plot
+supply_demand_curves <- linear_curve_characteristic_supply_demand$curves
+supply_demand_plot_2 <- linear_curve_characteristic_supply_demand$plot
 
 supply_demand_plot_2
-
 ```
 
 **FUNKCIJA**: *`curve_N_points`*
@@ -449,4 +448,27 @@ production_possibility_frontier(curve_data, colors = "red", x = c(2, 5, 8), labe
 curve_data1 <- bezier(x = c(0, 5, 9, 13), y = c(11, 9, 6, 0)) %>% as.data.frame()
 curve_data2 <- bezier(x = c(0, 5, 9, 13), y = c(17, 13, 9, 0)) %>% as.data.frame()
 production_possibility_frontier(curve_data1, curve_data2, colors = c("red", "blue"), x = c(4, 9), labels = c("A", "B", "C", "D"))
+```
+
+
+# DEMO
+-   prikaz kombiniranja funkcija
+
+```{r}
+supply <- bezier(x = c(0, 8, 10), y = c(0, 5, 10)) %>% as.data.frame()
+demand <- bezier(x = c(0, 3, 10), y = c(10, 3, 0)) %>% as.data.frame()
+
+supply_demand_plot <- curve_N_points(supply, demand, title = "Supply & Demand", colors = c("blue", "red"))
+
+equi <- equilibrium(supply, demand, supply_demand_plot)
+
+supply_demand_plot_with_equi <- equi$plot
+
+sr <- supplier_revenue(supply, demand, supply_demand_plot_with_equi)
+
+supply_demand_plot_with_equi_and_sr <- sr$plot
+
+supply_demand_plot_with_equi_and_sr_and_surplus <- surplus_area(supply, demand, supply_demand_plot_with_equi_and_sr)
+
+supply_demand_plot_with_equi_and_sr_and_surplus
 ```

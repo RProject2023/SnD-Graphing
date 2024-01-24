@@ -34,11 +34,10 @@ linear_curve_2_points <- function(...,
                                   pointsHidden = TRUE,
                                   lineCoordinateHidden = TRUE,
                                   gg = NULL) {
-  
-    if(length(list(...)) != length(colors)) {
+    if (length(list(...)) != length(colors)) {
         stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
     }
-  
+
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
@@ -46,7 +45,7 @@ linear_curve_2_points <- function(...,
     points_df <- data.frame()
     segments_df <- data.frame()
     curves_list <- list()
-    
+
     for (i in seq_along(list(...))) {
         points <- unlist(list(...)[[i]])
 
@@ -54,22 +53,22 @@ linear_curve_2_points <- function(...,
         y1 <- points[2]
         x2 <- points[3]
         y2 <- points[4]
-        
+
         x_axis <- c(x1, x2)
         y_axis <- c(y1, y2)
-  
+
         points_df <- rbind(points_df, data.frame(x = x_axis, y = y_axis))
         segments_df <- rbind(segments_df, data.frame(x = c(x1, x1, minX), y = c(y1, minY, y1), xend = x1, yend = y1))
         segments_df <- rbind(segments_df, data.frame(x = c(x2, x2, minX), y = c(y2, minY, y2), xend = x2, yend = y2))
 
         slope <- (y2 - y1) / (x2 - x1)
         intercept <- y1 - slope * x1
-        
+
         x_values <- seq(minX, maxX)
         y_values <- intercept + slope * x_values
-        
+
         curves_list[[i]] <- bezier(x = x_values, y = y_values) %>% as.data.frame()
-        
+
         gg <- gg + geom_abline(intercept = intercept, slope = slope, color = colors[i], linewidth = 1)
     }
 
@@ -120,11 +119,10 @@ linear_curve_characteristic <- function(...,
                                         xlabel = "Q - quantity",
                                         ylabel = "P - price",
                                         gg = NULL) {
-  
-    if(length(list(...)) != length(colors)) {
+    if (length(list(...)) != length(colors)) {
         stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
     }
-  
+
     if (is.null(gg)) {
         gg <- ggplot(data.frame(x = c(minX, maxX), y = c(minY, minY)), aes(x = x, y = y))
     }
@@ -132,18 +130,18 @@ linear_curve_characteristic <- function(...,
     points_df <- data.frame()
     segments_df <- data.frame()
     curves_list <- list()
-    
+
     for (i in seq_along(list(...))) {
         characteristic <- unlist(list(...)[[i]])
 
         slope <- characteristic[1]
         intercept <- characteristic[2]
-        
+
         x_values <- seq(minX, maxX)
         y_values <- intercept + slope * x_values
-        
+
         curves_list[[i]] <- bezier(x = x_values, y = y_values) %>% as.data.frame()
-        
+
         gg <- gg + geom_abline(intercept = intercept, slope = slope, color = colors[i], linewidth = 1)
     }
 
@@ -184,11 +182,11 @@ curve_N_points <- function(...,
                            gg = NULL) {
     curve <- list(...)
     ncurve <- length(curve)
-    
-    if(length(list(...)) != length(colors)) {
-      stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
+
+    if (length(list(...)) != length(colors)) {
+        stop("Number of elements in '...' should be the same as the number of elements in 'colors'.")
     }
-    
+
     if (is.null(gg)) {
         gg <- ggplot(mapping = aes(x = x, y = y))
     }
@@ -257,9 +255,9 @@ curve_by_function <- function(...,
     }
 
     if (is.null(gg)) {
-      gg <- ggplot(data.frame(x = c(minX, maxX)), aes(x = x))
+        gg <- ggplot(data.frame(x = c(minX, maxX)), aes(x = x))
     }
-    
+
     gg <- gg + labs(title = title, x = xlabel, y = ylabel) +
         coord_cartesian(ylim = c(minY, maxY)) +
         theme_minimal()
@@ -382,7 +380,7 @@ supplier_revenue <- function(curve1, curve2, gg, color = "green", displayValue =
     gg <- gg +
         geom_segment(aes(x = equilibrium$x, y = 0, xend = equilibrium$x, yend = equilibrium$y), color = color, size = 1) +
         geom_segment(aes(x = 0, y = equilibrium$y, xend = equilibrium$x, yend = equilibrium$y), color = color, size = 1) +
-        geom_ribbon(aes(x = c(0, equilibrium$x), ymin = 0, ymax = equilibrium$y, fill = color), alpha = 0.15, inherit.aes = FALSE)
+        geom_ribbon(aes(x = c(0, equilibrium$x), ymin = 0, ymax = equilibrium$y, fill = "Revenue"), alpha = 0.15, inherit.aes = FALSE)
     if (displayValue) {
         gg <- gg +
             geom_text(aes(x = equilibrium$x / 2, y = equilibrium$y / 2, label = sprintf("Revenue = %0.1f", revenue), hjust = -0.3))
