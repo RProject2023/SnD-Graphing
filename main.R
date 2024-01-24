@@ -244,9 +244,9 @@ curve_by_function <- function(...,
                               showInfo = TRUE, # show point values on x&y axis
                               pointLabel = "", # label for point
                               axisValues = NULL, # show values on x-axis
-                              minX = -50,
+                              minX = 0,
                               maxX = 50,
-                              minY = -100,
+                              minY = 0,
                               maxY = 2500,
                               gg = NULL) {
     curves <- list(...)

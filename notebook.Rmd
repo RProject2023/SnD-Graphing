@@ -101,7 +101,7 @@ supply_demand_plot_2
 
 **FUNKCIJA**: *`curve_N_points`*
 
--   **...** : lista točaka oblika c = (nagib, odsječak)
+-   **...** : lista krivulja, npr. bezier(x = c(x1, x2, x3), y = c(y1, y2, y3)) %\>% as.data.frame()
 
 -   **title**: naslov prikazanog grafa
 
@@ -339,9 +339,9 @@ Dodavanje natpisa uz krivulje
 curve_by_function(my_function1, label = "D")
 ```
 
-Dodavanje točaka: \
+Dodavanje točaka:\
 - dodavanje linija prema osima iz tih točaka\
-- označavanje na osima vrijednosti koje tim točkama pripadaju \
+- označavanje na osima vrijednosti koje tim točkama pripadaju\
 - dodavanje imena točkama
 
 1.  Dodavanje točaka uz specifikaciju koordinata
